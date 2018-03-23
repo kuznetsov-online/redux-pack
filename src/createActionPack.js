@@ -1,15 +1,18 @@
-function createActionPack(type, promise, meta = {}) {
+import isFunction from 'lodash/isFunction'
 
-  const typeString = type.toString();
+function createActionPack(type, promiseCreator, metaCreator = {}) {
 
-  const actionCreator = () => {
-    const action = { type, promise, meta };
-    return action;
-  }
+  const typeString = type.toString()
 
-  actionCreator.toString = () => typeString;
+  const actionCreator = (...args) => ({
+    type,
+    promise: isFunction(promiseCreator) ? promiseCreator(...args) : promiseCreator,
+    meta: isFunction(metaCreator) ? metaCreator(...args) : metaCreator,
+  })
 
-  return actionCreator;
+  actionCreator.toString = () => typeString
+
+  return actionCreator
 
 }
 

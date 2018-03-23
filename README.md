@@ -90,9 +90,11 @@ With redux-pack, we only need to define a single action constant for the entire 
 // actions.js
 import { createActionPack } from 'redux-pack';
 
-export function loadFoo(id) {
-  return createActionPack('LOAD_FOO', Api.getFoo(id));
-}
+export const loadFoo => createActionPack(
+  'LOAD_FOO',
+  (id) => Api.getFoo(id)
+);
+
 ```
 
 In the reducer, you handle the action with redux-pack's `handle` function, where you can specify several smaller "reducer" functions for each lifecycle. `finish` is called for both resolving/rejecting, `start` is called at the beginning, `success` is called on resolve, `failure` is called on reject, and `always` is called for all of them.
@@ -146,11 +148,13 @@ export function loadFoo(id) {
 
 ```js
 // actions.js
-export function loadFoo(id) {
-  return createActionPack('LOAD_FOO', Api.getFoo(id), {
+export const loadFoo = createActionPack(
+  'LOAD_FOO',
+  (id) => Api.getFoo(id),
+  {
     onSuccess: (response) => logSuccess(response)
-  });
-}
+  }
+);
 ```
 
 ## How to
