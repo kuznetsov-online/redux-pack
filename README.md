@@ -87,16 +87,11 @@ switch (type) {
 With redux-pack, we only need to define a single action constant for the entire promise lifecycle, and then return the promise directly with a `promise` namespace specified:
 
 ```js
-// types.js
-export const LOAD_FOO = 'LOAD_FOO';
-```
-```js
 // actions.js
+import { createActionPack } from 'redux-pack';
+
 export function loadFoo(id) {
-  return {
-    type: LOAD_FOO,
-    promise: Api.getFoo(id),
-  };
+  return createActionPack('LOAD_FOO', Api.getFoo(id));
 }
 ```
 
@@ -105,11 +100,12 @@ In the reducer, you handle the action with redux-pack's `handle` function, where
 ```js
 // reducer.js
 import { handle } from 'redux-pack';
+import { actions } from './actions';
 
 export function fooReducer(state = initialState, action) {
   const { type, payload } = action;
   switch (type) {
-    case LOAD_FOO:
+    case actions.loadFoo:
       return handle(state, action, {
         start: prevState => ({
           ...prevState,
@@ -151,13 +147,9 @@ export function loadFoo(id) {
 ```js
 // actions.js
 export function loadFoo(id) {
-  return {
-    type: LOAD_FOO,
-    promise: Api.getFoo(id),
-    meta: {
-      onSuccess: (response) => logSuccess(response)
-    },
-  };
+  return createActionPack('LOAD_FOO', Api.getFoo(id), {
+    onSuccess: (response) => logSuccess(response)
+  });
 }
 ```
 
